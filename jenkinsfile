@@ -7,7 +7,7 @@
 // github token: 7aa67437f634ae02e4b34b65ff04f9b8d8e6f787
 
 pipeline {
-  agent any
+  agent { label 'slave' }
     
     environment {
 
