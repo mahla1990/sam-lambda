@@ -34,14 +34,11 @@ pipeline {
 
         stage('package') {
             steps {
-                   withAWS(credentials: 'aws-credentials', region: 'eu-west-1'){
-                          sh'aws s3 mb s3://myappmahla'
                         //  sh 'cd  /home/ec2-user/.linuxbrew/bin/sam'
                           sh' sam package \
                                 --template-file template.yaml \
                                 --output-template-file packaged.yaml \
                                 --s3-bucket myappmahla'  
-                  }
             }
         } 
       
