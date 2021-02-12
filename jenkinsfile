@@ -7,7 +7,7 @@
 // github token: 7aa67437f634ae02e4b34b65ff04f9b8d8e6f787
 
 pipeline {
-  agent any
+  agent 'master'
     
     environment {
 
@@ -34,6 +34,7 @@ pipeline {
 
         stage('package') {
             steps {
+              sh "sam --version"
                         //  sh 'cd  /home/ec2-user/.linuxbrew/bin/sam'
                           sh' sam package \
                                 --template-file template.yaml \
