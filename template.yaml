@@ -9,7 +9,7 @@ Resources:
     Properties:
       Handler: src/app.lambda_handler
       Runtime: python3.6
-      CodeUri: src/
+      CodeUri: .
       Description: Uses Rekognition APIs to detect text in S3 Objects and stores the text and labels in DynamoDB.
       MemorySize: 512
       Timeout: 30

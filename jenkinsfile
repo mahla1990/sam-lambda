@@ -45,6 +45,7 @@ pipeline {
               sh "whoami"
               script {
               docker.image(DOCKER_BUILD_NAME).inside(DOCKER_RUN_PARAMS) {
+                sh "aws sts get-caller-identity"
                 sh "sam --version"
                 sh' sam package \
                                 --template-file template.yaml \
