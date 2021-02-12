@@ -11,7 +11,7 @@ pipeline {
     
     environment {
 
-        PROJECT_NAME = 'AWS-SAM-OCR'
+        PROJECT_NAME = 'aws-sam-ocr'
         AWS_DEFAULT_REGION = 'eu-west-1'
  //     GIT_CREDENTIALS_ID = "a85c8c78-3cc3-4940-8a25-fd4ec90441a3"
         DOCKER_BUILD_NAME = 'aws-sam-ocr'
@@ -42,8 +42,9 @@ pipeline {
         }
         stage('package') {
             steps {
-              sh "whoami"
               script {
+              sh "whoami"
+                sh "aws sts get-caller-identity"
               docker.image(DOCKER_BUILD_NAME).inside(DOCKER_RUN_PARAMS) {
                 sh "aws sts get-caller-identity"
                 sh "sam --version"
