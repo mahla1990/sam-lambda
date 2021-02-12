@@ -14,6 +14,8 @@ pipeline {
         PROJECT_NAME = 'AWS-SAM-OCR'
         AWS_DEFAULT_REGION = 'eu-west-1'
  //     GIT_CREDENTIALS_ID = "a85c8c78-3cc3-4940-8a25-fd4ec90441a3"
+        DOCKER_BUILD_NAME = 'aws-sam-ocr'
+        DOCKER_RUN_PARAMS = "-e NODE_PATH=/home/ -e AWS_DEFAULT_REGION=eu-west-1 -v ${WORKSPACE}:/home/jenkins/${PROJECT_NAME}"
     }
 
     options {
@@ -31,27 +33,29 @@ pipeline {
                //sh 'sam init --location https://github.com/aws-samples/cookiecutter-aws-sam-s3-rekognition-dynamodb-python --no-input'
             }
         }
-
+        stage('Init') {
+            steps {
+                script {
+                    sh("docker build -t ${env.DOCKER_BUILD_NAME} .")
+                }
+            }
+        }
         stage('package') {
             steps {
               sh "whoami"
-              sh "sam --version"
-                        //  sh 'cd  /home/ec2-user/.linuxbrew/bin/sam'
-                          sh' sam package \
+              docker.image(DOCKER_BUILD_NAME).inside(DOCKER_RUN_PARAMS) {
+                sh "sam --version"
+                sh' sam package \
                                 --template-file template.yaml \
                                 --output-template-file packaged.yaml \
                                 --s3-bucket myappmahla'  
+              }
             }
-        } 
-      
+        }
         stage('Deploy') {
             steps {
      
-                   /* dir("${PROJECT_NAME}-conf") {
-                        def targetBranch = TARGET_ENV.equals("prod") ? "master" : "develop"
-                        git branch: "${targetBranch}", credentialsId: "${GIT_CREDENTIALS_ID}", url: "https://github.com/sky-uk/${PROJECT_NAME}-conf.git"
-                    }*/
-                 withAWS(credentials: 'aws-credentials', region: 'eu-west-1'){
+              docker.image(DOCKER_BUILD_NAME).inside(DOCKER_RUN_PARAMS) {
                        sh 'sam deploy \
                               --template-file packaged.yaml \
                               --stack-name aws-sam-ocr \
