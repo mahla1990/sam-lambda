@@ -43,6 +43,7 @@ pipeline {
         stage('package') {
             steps {
               sh "whoami"
+              script {
               docker.image(DOCKER_BUILD_NAME).inside(DOCKER_RUN_PARAMS) {
                 sh "sam --version"
                 sh' sam package \
@@ -50,11 +51,12 @@ pipeline {
                                 --output-template-file packaged.yaml \
                                 --s3-bucket myappmahla'  
               }
+              }
             }
         }
         stage('Deploy') {
             steps {
-     
+                script {
               docker.image(DOCKER_BUILD_NAME).inside(DOCKER_RUN_PARAMS) {
                        sh 'sam deploy \
                               --template-file packaged.yaml \
@@ -62,7 +64,7 @@ pipeline {
                               --capabilities CAPABILITY_IAM \
                               --region eu-west-1'
                          }
-
+                }
                 }
             }
     }
@@ -97,4 +99,3 @@ pipeline {
         }
     }
 }
-
